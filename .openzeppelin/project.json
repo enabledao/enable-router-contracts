@@ -1,0 +1,7 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {},
+  "dependencies": {},
+  "name": "@enabledao/enable-router-contracts",
+  "version": "0.0.1"
+}

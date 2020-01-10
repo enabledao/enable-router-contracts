@@ -1,0 +1,67 @@
+{
+  "name": "@enabledao/enable-router-contracts",
+  "version": "0.0.1",
+  "description": "Router contracts to distribute funds",
+  "main": "truffle-config.js",
+  "scripts": {
+    "compile": "truffle compile --all",
+    "oz:create": "oz create",
+    "oz:publish": "oz publish",
+    "oz:push": "oz push",
+    "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol",
+    "postinstall": "npm run version",
+    "solhint": "./node_modules/.bin/solhint contracts/**/*.sol",
+    "solium": "./node_modules/.bin/solium -d contracts/",
+    "solium:fix": "./node_modules/.bin/solium -d contracts/ --fix",
+    "test": "oz publish --network development && oz push --network development && truffle test",
+    "version": "node ./scripts/version/on-version.js && git add ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier:solidity"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enabledao/enable-router-contracts.git"
+  },
+  "keywords": [
+    "zeppelinos",
+    "openzeppelin",
+    "truffle",
+    "react"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/enabledao/enable-router-contracts/issues"
+  },
+  "homepage": "https://github.com/enabledao/enable#readme",
+  "dependencies": {
+    "@0x/sol-trace": "^3.0.3",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/register": "^7.7.7",
+    "@openzeppelin/contracts-ethereum-package": "2.4.0",
+    "dotenv": "^8.2.0",
+    "minimist": "^1.2.0",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "zos-lib": "^2.4.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@openzeppelin/cli": "^2.6.0",
+    "chai": "^4.2.0",
+    "eth-gas-reporter": "^0.2.14",
+    "ethlint": "^1.2.5",
+    "husky": "^4.0.4",
+    "openzeppelin-test-helpers": "^0.5.1",
+    "prettier": "^1.19.1",
+    "prettier-plugin-solidity": "^1.0.0-alpha.27",
+    "solhint": "^2.3.0",
+    "solhint-plugin-prettier": "0.0.3",
+    "solidity-coverage": "^0.7.1",
+    "truffle": "^5.1.7",
+    "web3": "^1.2.4"
+  }
+}

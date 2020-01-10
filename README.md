@@ -1,2 +1,3 @@
 # enable-router-contracts
-Rapayment router contracts to distribute funds to members ofprovided token registry
+
+Repayment router contracts to distribute funds to members of provided token registry
