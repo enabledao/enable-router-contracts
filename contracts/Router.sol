@@ -38,11 +38,11 @@ contract Router is Initializable {
     for (uint i = 0; i< payments; i++) {
       if (paymentToken == address(0)) {
         bytes memory payload = abi.encodePacked('');
-        (bool success,) = paymentToken.call(payload).value(values[i]);
+        (bool success,) = paymentToken.call.value(values[i])(payload);
       } else {
         bytes memory payload = abi.encodeWithSignature(TOKEN_TRANSFER_SIGNATURE, recipients[0] , values[0]);
         (,bytes memory returnData) = paymentToken.call(payload);
-        (bool success,) = paymentToken.call(payload).value(values[i]);
+        (bool success,) = paymentToken.call(payload);
       }
     }
   }
