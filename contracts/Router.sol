@@ -10,23 +10,25 @@ contract Router is Initializable {
     ) external initializer {
     }
 
-  function _testForSufficientFunds (address paymentToken, uint8 total)
-  internal {
+  function _testForSufficientFunds (address paymentToken, uint256 total)
+  internal view {
     if (paymentToken == address(0)) {
-      require(msg.value >= uint256(total), 'Insufficient Funds for route');
+      // require(msg.value > 0, 'No amount sent to contract');
+      require(msg.value >= total, 'Insufficient Funds for route');
+      require(msg.value == total, 'Excess ETH for route');
     } else {
       bytes memory payload = abi.encodeWithSignature(TOKEN_APPROVAL_SIGNATURE, msg.sender , address(this));
-      (,bytes memory returnData) = paymentToken.call(payload);
+      (,bytes memory returnData) = paymentToken.staticcall(payload);
       uint256 allowance = abi.decode(returnData, (uint));
-      require(allowance >= uint256(total), 'Insufficient Funds for route');
+      require(allowance >= total, 'Insufficient Funds for route');
     }
   }
 
 //Call function with `call` to test if parameters are correct
-  function dryRouteFunds (address paymentToken, uint8 payments, address[] memory recipients, uint8[] memory values)
-  public  {
-    uint8 total;
-    for (uint8 i = 0; i< payments; i++) {
+  function dryRouteFunds (address paymentToken, uint8 payments, address[] memory recipients, uint256[] memory values)
+  public payable  {
+    uint256 total;
+    for (uint256 i = 0; i< payments; i++) {
       total = total + values[i];
     }
     _testForSufficientFunds(paymentToken, total);
