@@ -80,8 +80,12 @@ contract('Router', accounts => {
   it('should fail on incorrect token route paramaters and conditions', async () => {
     const userAllowance = await paymentToken.allowance(accounts[0], router.address);
     expect(userAllowance).to.be.bignumber.gte(new BN(0), 'Incorrect allowance on account');
+    const total = etherRouteParams()[3].reduce((a, b) => a.add(b), new BN(0));
 
     //ERC20 route
+    await expectRevert(router.dryRouteFunds.call(...tokenRouteParams()), 'Insufficient permission');
+    await paymentToken.approve(router.address, total);
+
     await expectRevert(
       router.dryRouteFunds.call(...tokenRouteParams()),
       'Insufficient Funds for route'
@@ -99,7 +103,7 @@ contract('Router', accounts => {
     );
 
     const newBalance = await balance.current(accounts[0]);
-    expect(newBalance).to.be.bignumber.eq(new BN(newBalance), 'Funds used on transaction');
+    expect(newBalance).to.be.bignumber.eq(new BN(userBalance), 'Funds used on transaction');
   });
 
   it('successfully test token routeFunds', async () => {
@@ -107,7 +111,9 @@ contract('Router', accounts => {
     await paymentToken.approve(router.address, total);
     const userAllowance = await paymentToken.allowance(accounts[0], router.address);
     expect(userAllowance).to.be.bignumber.gte(new BN(0), 'Incorrect allowance on account');
+    await paymentToken.mint(accounts[0], total);
     const userBalance = await paymentToken.balanceOf(accounts[0]);
+    expect(userBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
 
     //ERC20 route
     await expectRevert(router.dryRouteFunds.call(...tokenRouteParams()), 'Revert at function end');
@@ -130,5 +136,31 @@ contract('Router', accounts => {
       new BN(userBalance).sub(new BN(txOpts.value)),
       'Funds used more than allocated Gas'
     );
+  });
+
+  it('successfully routeFunds', async () => {
+    const userBalance = await balance.current(accounts[0]);
+    const total = etherRouteParams()[3].reduce((a, b) => a.add(b), new BN(0));
+    expect(userBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
+
+    const balances = await Promise.all(etherRouteParams()[2].map(user => balance.current(user)));
+
+    const receipt = await router.routeFunds(...etherRouteParams(), { value: total });
+    const gasPrice = (await web3.eth.getTransaction(receipt.tx)).gasPrice;
+
+    const newBalance = await balance.current(accounts[0]);
+    const newBalances = await Promise.all(etherRouteParams()[2].map(user => balance.current(user)));
+
+    expect(newBalance).to.be.bignumber.eq(
+      new BN(userBalance)
+        .sub(new BN(total))
+        .sub(new BN(receipt.receipt.cumulativeGasUsed).mul(new BN(gasPrice))),
+      'Funds used on transaction'
+    );
+
+    const expectedBalances = balances.map((bal, ind) =>
+      new BN(bal).add(new BN(etherRouteParams()[3][ind]))
+    );
+    expect(newBalances).to.deep.equal(expectedBalances);
   });
 });

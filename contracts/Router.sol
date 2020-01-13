@@ -2,9 +2,9 @@ pragma solidity 0.5.11;
 
 import "zos-lib/contracts/Initializable.sol";
 
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+
 contract Router is Initializable {
-  string private constant TOKEN_APPROVAL_SIGNATURE = 'allowance(address,address)';
-  string private constant TOKEN_TRANSFER_SIGNATURE = 'transfer(address,uint256)';
 
   function initialize(
     ) external initializer {
@@ -13,14 +13,15 @@ contract Router is Initializable {
   function _testForSufficientFunds (address paymentToken, uint256 total)
   internal view {
     if (paymentToken == address(0)) {
-      // require(msg.value > 0, 'No amount sent to contract');
       require(msg.value >= total, 'Insufficient Funds for route');
       require(msg.value == total, 'Excess ETH for route');
     } else {
-      bytes memory payload = abi.encodeWithSignature(TOKEN_APPROVAL_SIGNATURE, msg.sender , address(this));
-      (,bytes memory returnData) = paymentToken.staticcall(payload);
-      uint256 allowance = abi.decode(returnData, (uint));
-      require(allowance >= total, 'Insufficient Funds for route');
+      IERC20 token = IERC20(paymentToken);
+      uint256 allowance = token.allowance(msg.sender , address(this));
+      require(allowance >= total, 'Insufficient permission');
+
+      uint256 balance = token.balanceOf(msg.sender);
+      require(balance >= total, 'Insufficient Funds for route');
     }
   }
 
@@ -28,22 +29,22 @@ contract Router is Initializable {
   function dryRouteFunds (address paymentToken, uint8 payments, address[] memory recipients, uint256[] memory values)
   public payable  {
     uint256 total;
-    for (uint256 i = 0; i< payments; i++) {
+    for (uint8 i = 0; i< payments; i++) {
       total = total + values[i];
     }
     _testForSufficientFunds(paymentToken, total);
     revert('Revert at function end');//Revert to ensure accidental send transactions are reverted
   }
 
-  function routeFunds (address paymentToken, uint8 payments, address[] memory recipients, uint8[] memory values)
-  public {
-    for (uint i = 0; i< payments; i++) {
+  function routeFunds (address paymentToken, uint8 payments, address[] memory recipients, uint256[] memory values)
+  public payable {
+    for (uint8 i = 0; i< payments; i++) {
       if (paymentToken == address(0)) {
-        bytes memory payload = abi.encodePacked('');
-        (bool success,) = paymentToken.call.value(values[i])(payload);
+        bytes memory payload = abi.encodePacked(uint(0));
+        (bool success,) = recipients[i].call.value(values[i])(payload);
       } else {
-        bytes memory payload = abi.encodeWithSignature(TOKEN_TRANSFER_SIGNATURE, recipients[0] , values[0]);
-        (,bytes memory returnData) = paymentToken.call(payload);
+        IERC20 token = IERC20(paymentToken);
+        bytes memory payload = abi.encodeWithSignature('transfer(address,uint256)', recipients[i] , values[i]);
         (bool success,) = paymentToken.call(payload);
       }
     }
