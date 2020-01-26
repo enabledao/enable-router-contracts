@@ -2,9 +2,11 @@
  * This file stress tests the Priority Queue implementation to get
  * data for submitting 10, 50, 100, 125, 150, 175, 200 1000, 10000 addresses to the router
  */
+import { balance, BN, constants, expectRevert, time } from 'openzeppelin-test-helpers';
+import { generateAccounts } from '../helper';
+
 const Router = artifacts.require('Router');
 const PaymentToken = artifacts.require('StandaloneERC20');
-import { balance, BN, constants, expectRevert, time } from 'openzeppelin-test-helpers';
 
 const VERBOSE = true;
 const TOKEN_DECIMALS = new BN(18);
@@ -17,7 +19,7 @@ const log = (...msgs) => {
 };
 
 const printLine = () => {
-  log('--**--'.repeat(12));
+  log('--_--'.repeat(3));
 };
 
 const printNewLine = () => {
@@ -26,45 +28,16 @@ const printNewLine = () => {
 const weiValue = eth => web3.utils.toWei(eth);
 
 const main = async (count, { router, paymentToken, web3, accounts }, ethRoute) => {
-  log(`Router address: ${router.address}`);
-  printLine();
+  printNewLine();
 
-  const startAddr = '0x2ffd48cc061331d071a1a8178cfc2a3863d56d4e';
-  const nextAddr = addr => {
-    let a = new BN(addr);
-    a = a.add(new BN('1'));
-    a = web3.utils.toHex(a);
-    if (a.length > 64) {
-      throw new Error('ERROR: ADDRESS OVERFLOW.. EXITING');
-    }
-    return a;
-  };
-
-  const buildList = num => {
-    let l = [];
-
-    let curAddr = startAddr;
-    let curVal;
-    for (let i = 0; i <= num; i++) {
-      curVal = Math.floor(Math.random() * 10000);
-      curAddr = nextAddr(curAddr);
-      l.push({
-        addr: curAddr,
-        val: curVal
-      });
-    }
-    return l;
-  };
-
-  const list = buildList(count);
+  const list = generateAccounts(count).map(wallet => wallet.getChecksumAddressString());
 
   let most = 0;
   let sum = 0;
   const stressStart = new Date().getTime();
 
-  printNewLine();
-  printLine();
   log(`Route : to ${count} Addresses`);
+  printLine();
 
   const amount = DECIMAL_SHIFT.mul(new BN(1)).div(new BN(100));
   const routeParams = [count, list, list.map(() => amount)];
@@ -149,5 +122,29 @@ contract('Stress Router', accounts => {
 
   it('should successfully route token Funds to 10 addresses', async () => {
     await main(10, { router, paymentToken, web3, accounts });
+  });
+
+  it('should successfully routeFunds to 100 addresses', async () => {
+    await main(100, { router, paymentToken, web3, accounts }, true);
+  });
+
+  it('should successfully route token Funds to 100 addresses', async () => {
+    await main(100, { router, paymentToken, web3, accounts });
+  });
+
+  it('should successfully routeFunds to 175 addresses', async () => {
+    await main(175, { router, paymentToken, web3, accounts }, true);
+  });
+
+  it('should successfully route token Funds to 165 addresses', async () => {
+    await main(165, { router, paymentToken, web3, accounts });
+  });
+
+  it('should successfully routeFunds to 191 addresses', async () => {
+    await main(191, { router, paymentToken, web3, accounts }, true);
+  });
+
+  it('should successfully route token Funds to 166 addresses', async () => {
+    await main(166, { router, paymentToken, web3, accounts });
   });
 });

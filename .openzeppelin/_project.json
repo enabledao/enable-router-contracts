@@ -1,0 +1,16 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {},
+  "dependencies": {
+    "openzeppelin-eth": "2.2.0"
+  },
+  "name": "enable-credit",
+  "version": "0.2.1",
+  "compiler": {
+    "manager": "openzeppelin",
+    "solcVersion": "0.5.11",
+    "compilerSettings": {
+      "optimizer": {}
+    }
+  }
+}
