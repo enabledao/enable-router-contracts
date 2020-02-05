@@ -45,13 +45,13 @@ const main = async (
   printLine();
 
   const amount = DECIMAL_SHIFT.mul(new BN(1)).div(new BN(100));
-  const routeParams = [count, list, list.map(() => amount)];
-  const etherRouteParams = [constants.ZERO_ADDRESS, ...routeParams];
-  const tokenRouteParams = [paymentToken.address, ...routeParams];
+  const routeParams = [count, false, list, list.map(() => amount)];
+  const etherRouteParams = revertOnError =>
+    [constants.ZERO_ADDRESS, ...routeParams].map((x, id) => (id === 2 && revertOnError ? true : x));
+  const tokenRouteParams = revertOnError =>
+    [paymentToken.address, ...routeParams].map((x, id) => (id === 2 && revertOnError ? true : x));
 
-  const total = routeParams[2].reduce((a, b) => a.add(b), new BN(0));
-
-  const contractFunction = allOrNone ? 'routeAllorNoneFunds' : 'routeFunds';
+  const total = routeParams[3].reduce((a, b) => a.add(b), new BN(0));
 
   if (ethRoute) {
     //ETH test route
@@ -59,13 +59,17 @@ const main = async (
     const userBalance = await balance.current(accounts[0]);
     // expect(userBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
 
-    const balances = await Promise.all(etherRouteParams[2].map(user => balance.current(user)));
-    await router[contractFunction](...etherRouteParams, { value: total });
+    const balances = await Promise.all(
+      etherRouteParams(allOrNone)[3].map(user => balance.current(user))
+    );
+    await router.routeFunds(...etherRouteParams(allOrNone), { value: total });
 
-    const newBalances = await Promise.all(etherRouteParams[2].map(user => balance.current(user)));
+    const newBalances = await Promise.all(
+      etherRouteParams(allOrNone)[3].map(user => balance.current(user))
+    );
 
     const expectedBalances = balances.map((bal, ind) =>
-      new BN(bal).add(new BN(etherRouteParams[3][ind]))
+      new BN(bal).add(new BN(etherRouteParams(allOrNone)[4][ind]))
     );
     expect(newBalances).to.deep.equal(expectedBalances, 'Incorrectly routed funds');
   } else {
@@ -81,16 +85,16 @@ const main = async (
     // expect(tokenBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
 
     const tokenBalances = await Promise.all(
-      tokenRouteParams[2].map(user => paymentToken.balanceOf.call(user))
+      tokenRouteParams(allOrNone)[3].map(user => paymentToken.balanceOf.call(user))
     );
-    await router[contractFunction](...tokenRouteParams);
+    await router.routeFunds(...tokenRouteParams(allOrNone));
 
     const newBalances = await Promise.all(
-      tokenRouteParams[2].map(user => paymentToken.balanceOf.call(user))
+      tokenRouteParams(allOrNone)[3].map(user => paymentToken.balanceOf.call(user))
     );
 
     const expectedBalances = tokenBalances.map((bal, ind) =>
-      new BN(bal).add(new BN(tokenRouteParams[3][ind]))
+      new BN(bal).add(new BN(tokenRouteParams(allOrNone)[4][ind]))
     );
     expect(newBalances.map(b => b.toString())).to.deep.equal(
       expectedBalances.map(b => b.toString()),
