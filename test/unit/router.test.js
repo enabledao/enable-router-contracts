@@ -49,7 +49,7 @@ contract('Router', accounts => {
     );
 
     router = await Router.new();
-    await router.initialize();
+    await router.initialize(accounts[0]);
   });
 
   it('Router should deploy successfully', async () => {
