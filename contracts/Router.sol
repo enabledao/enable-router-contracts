@@ -12,10 +12,10 @@ contract Router is Initializable {
         uint256[] memory values
     ) public payable {
         for (uint8 i = 0; i < payments; i++) {
-            if (paymentToken == address(0)) {
+            if (paymentToken == address(0)) {//ETH transfer
                 bytes memory payload = abi.encodePacked(uint256(0));
                 (bool success, ) = recipients[i].call.value(values[i])(payload);
-            } else {
+            } else {//ER20 Token transfer
                 bytes memory payload = abi.encodeWithSignature(
                     'transferFrom(address,address,uint256)',
                     msg.sender,

@@ -4,5 +4,6 @@ set -eu
 # set -euxo pipefail
 
 npx truffle compile --all
-npx oz push $@
-npx oz publish $@
+npm run oz:push -- $@
+npm run oz:publish -- $@
+npm run oz:create -- Router --no-interactive $@
