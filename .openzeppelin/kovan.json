@@ -1,0 +1,89 @@
+{
+  "contracts": {
+    "Router": {
+      "address": "0x1A89AFCa69789Ed14cDc9116592c7d088853416d",
+      "constructorCode": "608060405234801561001057600080fd5b50610680806100206000396000f3fe",
+      "bodyBytecodeHash": "5cb94c4b850f2e644db5d300a0f17a13a327248b8f28012c65fe2d600b74b726",
+      "localBytecodeHash": "d3b80f7edbced8a10f077a2024188d8aa2f97a08f17c69629161b766dabb5347",
+      "deployedBytecodeHash": "d3b80f7edbced8a10f077a2024188d8aa2f97a08f17c69629161b766dabb5347",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initialized",
+          "astId": 1798,
+          "type": "t_bool",
+          "src": "757:24:16"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initializing",
+          "astId": 1800,
+          "type": "t_bool",
+          "src": "876:25:16"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "______gap",
+          "astId": 1856,
+          "type": "t_array:50<t_uint256>",
+          "src": "1951:29:16"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {},
+  "proxies": {
+    "@enabledao/enable-router-contracts/Router": [
+      {
+        "address": "0xDeb2d32384Bd1cD5F2339C17e4C406F13DD1F655",
+        "version": "0.0.1",
+        "implementation": "0x1A89AFCa69789Ed14cDc9116592c7d088853416d",
+        "admin": "0xa4Ed610e358712fCc76B074B4255C1d833eEDBBD",
+        "kind": "Upgradeable"
+      }
+    ]
+  },
+  "manifestVersion": "2.2",
+  "version": "0.0.1",
+  "app": {
+    "address": "0xEd68bC56afd427555Bf7eCB3eFB82498229B1C22"
+  },
+  "package": {
+    "address": "0x3AA70a8Ba68A12D2016a836766C60999126E8a87"
+  },
+  "provider": {
+    "address": "0x81a96daB9E816B75aBCcD312273946C7Eb285396"
+  },
+  "proxyAdmin": {
+    "address": "0xa4Ed610e358712fCc76B074B4255C1d833eEDBBD"
+  }
+}
