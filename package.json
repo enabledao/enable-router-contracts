@@ -7,6 +7,7 @@
     "compile": "truffle compile --all",
     "clear-test-contracts": "rm -rf .openzeppelin/dev*",
     "deploy": "sh scripts/deploy/oz.deploy.sh",
+    "initialize": "truffle exec scripts/deploy/oz.initialize.js",
     "oz:create": "oz create",
     "oz:publish": "oz publish",
     "oz:push": "oz push",
@@ -15,7 +16,7 @@
     "solhint": "./node_modules/.bin/solhint contracts/**/*.sol",
     "solium": "./node_modules/.bin/solium -d contracts/",
     "solium:fix": "./node_modules/.bin/solium -d contracts/ --fix",
-    "test": "npm run deploy -- --network development && truffle test --network development",
+    "test": "truffle test --network development",
     "version": "node ./scripts/version/on-version.js && git add ."
   },
   "husky": {
