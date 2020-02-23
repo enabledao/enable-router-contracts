@@ -124,7 +124,7 @@ contract('Stress Router', accounts => {
     );
 
     router = await Router.new();
-    await router.initialize();
+    await router.initialize(accounts[0]);
   });
 
   it('should successfully routeFunds to 10 addresses', async () => {
