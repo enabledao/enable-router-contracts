@@ -2,6 +2,7 @@ pragma solidity 0.5.11;
 
 import '@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/StandaloneERC20.sol';
 
+
 contract DummyToken is StandaloneERC20 {
     function initialize(string memory name, string memory symbol, uint256 decimals) public {
         address[] memory minters = new address[](1);

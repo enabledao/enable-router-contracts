@@ -27,7 +27,12 @@ const printNewLine = () => {
 };
 const weiValue = eth => web3.utils.toWei(eth);
 
-const main = async (count, { router, paymentToken, web3, accounts }, ethRoute) => {
+const main = async (
+  count,
+  { router, paymentToken, web3, accounts },
+  ethRoute,
+  allOrNone = false
+) => {
   printNewLine();
 
   const list = generateAccounts(count).map(wallet => wallet.getChecksumAddressString());
@@ -40,11 +45,13 @@ const main = async (count, { router, paymentToken, web3, accounts }, ethRoute) =
   printLine();
 
   const amount = DECIMAL_SHIFT.mul(new BN(1)).div(new BN(100));
-  const routeParams = [count, list, list.map(() => amount)];
-  const etherRouteParams = [constants.ZERO_ADDRESS, ...routeParams];
-  const tokenRouteParams = [paymentToken.address, ...routeParams];
+  const routeParams = [count, false, list, list.map(() => amount)];
+  const etherRouteParams = revertOnError =>
+    [constants.ZERO_ADDRESS, ...routeParams].map((x, id) => (id === 2 && revertOnError ? true : x));
+  const tokenRouteParams = revertOnError =>
+    [paymentToken.address, ...routeParams].map((x, id) => (id === 2 && revertOnError ? true : x));
 
-  const total = routeParams[2].reduce((a, b) => a.add(b), new BN(0));
+  const total = routeParams[3].reduce((a, b) => a.add(b), new BN(0));
 
   if (ethRoute) {
     //ETH test route
@@ -52,13 +59,17 @@ const main = async (count, { router, paymentToken, web3, accounts }, ethRoute) =
     const userBalance = await balance.current(accounts[0]);
     // expect(userBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
 
-    const balances = await Promise.all(etherRouteParams[2].map(user => balance.current(user)));
-    await router.routeFunds(...etherRouteParams, { value: total });
+    const balances = await Promise.all(
+      etherRouteParams(allOrNone)[3].map(user => balance.current(user))
+    );
+    await router.routeFunds(...etherRouteParams(allOrNone), { value: total });
 
-    const newBalances = await Promise.all(etherRouteParams[2].map(user => balance.current(user)));
+    const newBalances = await Promise.all(
+      etherRouteParams(allOrNone)[3].map(user => balance.current(user))
+    );
 
     const expectedBalances = balances.map((bal, ind) =>
-      new BN(bal).add(new BN(etherRouteParams[3][ind]))
+      new BN(bal).add(new BN(etherRouteParams(allOrNone)[4][ind]))
     );
     expect(newBalances).to.deep.equal(expectedBalances, 'Incorrectly routed funds');
   } else {
@@ -74,16 +85,16 @@ const main = async (count, { router, paymentToken, web3, accounts }, ethRoute) =
     // expect(tokenBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
 
     const tokenBalances = await Promise.all(
-      tokenRouteParams[2].map(user => paymentToken.balanceOf.call(user))
+      tokenRouteParams(allOrNone)[3].map(user => paymentToken.balanceOf.call(user))
     );
-    await router.routeFunds(...tokenRouteParams);
+    await router.routeFunds(...tokenRouteParams(allOrNone));
 
     const newBalances = await Promise.all(
-      tokenRouteParams[2].map(user => paymentToken.balanceOf.call(user))
+      tokenRouteParams(allOrNone)[3].map(user => paymentToken.balanceOf.call(user))
     );
 
     const expectedBalances = tokenBalances.map((bal, ind) =>
-      new BN(bal).add(new BN(tokenRouteParams[3][ind]))
+      new BN(bal).add(new BN(tokenRouteParams(allOrNone)[4][ind]))
     );
     expect(newBalances.map(b => b.toString())).to.deep.equal(
       expectedBalances.map(b => b.toString()),
@@ -145,6 +156,38 @@ contract('Stress Router', accounts => {
   });
 
   it('should successfully route token Funds to 166 addresses', async () => {
+    await main(166, { router, paymentToken, web3, accounts });
+  });
+
+  it('should successfully routeAllorNoneFunds to 10 addresses', async () => {
+    await main(10, { router, paymentToken, web3, accounts }, true, true);
+  });
+
+  it('should successfully routeAllorNoneFunds token Funds to 10 addresses', async () => {
+    await main(10, { router, paymentToken, web3, accounts }, null, true);
+  });
+
+  it('should successfully routeAllorNoneFunds to 100 addresses', async () => {
+    await main(100, { router, paymentToken, web3, accounts }, true, true);
+  });
+
+  it('should successfully routeAllorNone token Funds to 100 addresses', async () => {
+    await main(100, { router, paymentToken, web3, accounts }, null, true);
+  });
+
+  it('should successfully routeAllorNoneFunds to 175 addresses', async () => {
+    await main(175, { router, paymentToken, web3, accounts }, true, true);
+  });
+
+  it('should successfully routeAllorNone token Funds to 165 addresses', async () => {
+    await main(165, { router, paymentToken, web3, accounts }, null, true);
+  });
+
+  it('should successfully routeAllorNoneFunds to 191 addresses', async () => {
+    await main(191, { router, paymentToken, web3, accounts }, true, true);
+  });
+
+  it('should successfully routeAllorNone token Funds to 166 addresses', async () => {
     await main(166, { router, paymentToken, web3, accounts });
   });
 });

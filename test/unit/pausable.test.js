@@ -28,6 +28,7 @@ contract('Pausable', accounts => {
       pausable.routeFunds(
         constants.ZERO_ADDRESS,
         1,
+        false,
         [accounts[1]],
         [
           new BN(10)
