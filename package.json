@@ -11,6 +11,7 @@
     "oz:create": "oz create",
     "oz:publish": "oz publish",
     "oz:push": "oz push",
+    "oz:verify": "oz verify",
     "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol",
     "postinstall": "npm run version",
     "solhint": "./node_modules/.bin/solhint contracts/**/*.sol",
