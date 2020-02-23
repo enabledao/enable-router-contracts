@@ -3,8 +3,17 @@ pragma solidity 0.5.11;
 import '@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol';
 
 contract Router is Pausable {
+
+    uint256 private _fee;
+    address private _admin;
+
     function initialize(address pauser) public initializer {
-      Pausable.initialize(pauser);
+        _admin = pauser;
+        Pausable.initialize(pauser);
+    }
+
+    function updateFee (uint256 __fee) public {
+        _fee = __fee;
     }
 
     function routeFunds(
@@ -14,6 +23,8 @@ contract Router is Pausable {
         address[] memory recipients,
         uint256[] memory values
     ) public payable whenNotPaused {
+        address(uint160(_admin)).transfer(_fee);
+
         for (uint8 i = 0; i < payments; i++) {
           bool success;
             if (paymentToken == address(0)) {//ETH transfer
