@@ -124,7 +124,7 @@ contract('Router', accounts => {
   });
 
   it.skip('should avoid funds lost to testing routeFunds', async () => {
-    const total = etherRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
+    const total = etherRoutParams()[4].reduce((a, b) => a.add(b), new BN(0));
     const txOpts = { value: total, gas: 500000 };
     const userBalance = await balance.current(accounts[0]);
 
@@ -138,6 +138,43 @@ contract('Router', accounts => {
       new BN(userBalance).sub(new BN(txOpts.value)),
       'Funds used more than allocated Gas'
     );
+  });
+
+  it('should fail to routeFunds without fee', async () => {
+    const params = [constants.ZERO_ADDRESS, 1, false, [accounts[2]], [0]];
+    const txOpts = { value: 0 };
+    const fee = DECIMAL_SHIFT.mul(new BN(5)).div(new BN(10));
+
+    const setFee = await router.fee.call();
+
+    await router.updateFee(fee);
+    await expectRevert(router.routeFunds(...params, txOpts), 'revert');
+  });
+
+  it('should fail to routeFunds with insufficient fee', async () => {
+    const total = etherRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
+    const txOpts = { value: total };
+    const fee = DECIMAL_SHIFT.mul(new BN(5)).div(new BN(10));
+
+    const setFee = await router.fee.call();
+
+    await router.updateFee(fee);
+
+    expect(await router.fee.call()).to.be.bignumber.eq(fee, 'Incorrect fee value set');
+    await expectRevert(router.routeFunds(...etherRouteParams(true), txOpts), 'revert');
+  });
+
+  it('should fail to route token Funds without fee', async () => {
+    const total = tokenRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
+    await paymentToken.approve(router.address, total);
+    const userAllowance = await paymentToken.allowance.call(accounts[0], router.address);
+    const fee = DECIMAL_SHIFT.mul(new BN(5)).div(new BN(10));
+
+    await paymentToken.mint(accounts[0], total);
+    const setFee = await router.fee.call();
+
+    await router.updateFee(fee);
+    await expectRevert(router.routeFunds(...tokenRouteParams()), 'revert');
   });
 
   it('successfully routeFunds', async () => {

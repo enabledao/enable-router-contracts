@@ -4,7 +4,7 @@ import '@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.so
 
 contract Router is Pausable {
 
-    uint256 private _fee;
+    uint256 public fee;
     address private _admin;
 
     function initialize(address pauser) public initializer {
@@ -13,7 +13,7 @@ contract Router is Pausable {
     }
 
     function updateFee (uint256 __fee) public {
-        _fee = __fee;
+        fee = __fee;
     }
 
     function routeFunds(
@@ -23,7 +23,7 @@ contract Router is Pausable {
         address[] memory recipients,
         uint256[] memory values
     ) public payable whenNotPaused {
-        address(uint160(_admin)).transfer(_fee);
+        address(uint160(_admin)).transfer(fee);
 
         for (uint8 i = 0; i < payments; i++) {
           bool success;
