@@ -63,80 +63,36 @@ contract('Router', accounts => {
     assert.exists(paymentToken.address, 'PaymentToken was not successfully deployed');
   });
 
-  it.skip('should fail on incorrect paramaters and conditions', async () => {
+  it('should fail on incorrect parameters and conditions', async () => {
     const userBalance = await balance.current(accounts[0]);
     const total = etherRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
     expect(userBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
-
     //ETH route
     await expectRevert(
-      router.dryRouteFunds.call(...etherRouteParams(), { value: weiValue('0') }),
-      'Insufficient Funds for route'
-    );
-
-    await expectRevert(
-      router.dryRouteFunds.call(...etherRouteParams(), { value: weiValue('1') }),
-      'Excess ETH for route'
+      router.routeFunds(...etherRouteParams(true), { value: weiValue('0') }),
+      'Failed routing'
     );
   });
 
-  it.skip('should fail on test incorrect token route paramaters and conditions', async () => {
+  it('should fail on test incorrect token route paramaters and conditions', async () => {
     const userAllowance = await paymentToken.allowance(accounts[0], router.address);
     expect(userAllowance).to.be.bignumber.gte(new BN(0), 'Incorrect allowance on account');
-    const total = etherRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
+    const total = tokenRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
 
     //ERC20 route
-    const unapproved = await router.routeFunds.call(...tokenRouteParams());
-    console.log(unapproved);
-    await paymentToken.approve(router.address, total);
-
-    const route = await router.routeFunds.call(...tokenRouteParams());
-    console.log(route);
-  });
-
-  it.skip('successfully test routeFunds', async () => {
-    const userBalance = await balance.current(accounts[0]);
-    const total = etherRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
-    expect(userBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
-
     await expectRevert(
-      router.dryRouteFunds.call(...etherRouteParams(), { value: total }),
-      'Revert at function end'
+      router.routeFunds(...tokenRouteParams(true), { value: weiValue('0') }),
+      'Failed routing'
     );
 
-    const newBalance = await balance.current(accounts[0]);
-    expect(newBalance).to.be.bignumber.eq(new BN(userBalance), 'Funds used on transaction');
-  });
-
-  it.skip('successfully test token routeFunds', async () => {
-    const total = etherRouteParams()[4].reduce((a, b) => a.add(b), new BN(0));
-    await paymentToken.approve(router.address, total);
-    const userAllowance = await paymentToken.allowance(accounts[0], router.address);
-    expect(userAllowance).to.be.bignumber.gte(new BN(0), 'Incorrect allowance on account');
-    await paymentToken.mint(accounts[0], total);
-    const userBalance = await paymentToken.balanceOf(accounts[0]);
-    expect(userBalance).to.be.bignumber.gte(total, 'Insufficient funds on account');
-
-    //ERC20 route
-    await expectRevert(router.dryRouteFunds.call(...tokenRouteParams()), 'Revert at function end');
-    const newBalance = await paymentToken.balanceOf(accounts[0]);
-    expect(userBalance).to.be.bignumber.eq(newBalance, 'Funds used on transaction');
-  });
-
-  it.skip('should avoid funds lost to testing routeFunds', async () => {
-    const total = etherRoutParams()[4].reduce((a, b) => a.add(b), new BN(0));
-    const txOpts = { value: total, gas: 500000 };
-    const userBalance = await balance.current(accounts[0]);
+    await paymentToken.approve(
+      router.address,
+      total.sub(DECIMAL_SHIFT.mul(new BN(1)).div(new BN(100)))
+    );
 
     await expectRevert(
-      router.dryRouteFunds(...etherRouteParams(), txOpts),
-      'Revert at function end'
-    );
-    const newBalance = await balance.current(accounts[0]);
-
-    expect(newBalance).to.be.bignumber.gte(
-      new BN(userBalance).sub(new BN(txOpts.value)),
-      'Funds used more than allocated Gas'
+      router.routeFunds(...tokenRouteParams(true), { value: weiValue('0') }),
+      'Failed routing'
     );
   });
 
@@ -295,5 +251,23 @@ contract('Router', accounts => {
       expectedBalances.map(b => b.toString()),
       'Incorrectly routed funds'
     );
+  });
+
+  it('should successfully updateFee', async () => {
+    const feeAmount = DECIMAL_SHIFT.mul(new BN(1)).div(new BN(100));
+
+    const fee = await router.fee.call();
+    expect(fee).to.be.bignumber.eq(new BN(0));
+    await router.updateFee(feeAmount);
+    expect(await router.fee.call()).to.be.bignumber.eq(feeAmount);
+  });
+
+  it('should successfully updateAdmin', async () => {
+    expectRevert(router.updateAdmin(accounts[2]), '');
+
+    // const fee = await router.fee.call();
+    // expect(fee).to.be.bignumber.eq(new BN(0));
+    // await router.updateFee(feeAmount);
+    // expect(await router.fee.call()).to.be.bignumber.eq(feeAmount);
   });
 });

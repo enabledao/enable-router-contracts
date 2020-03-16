@@ -7,13 +7,21 @@ contract Router is Pausable {
     uint256 public fee;
     address private _admin;
 
+    modifier onlyAdmin (admin) {
+      require(admin == _admin, 'Admin only acton')
+    }
+
     function initialize(address pauser) public initializer {
         _admin = pauser;
         Pausable.initialize(pauser);
     }
 
-    function updateFee (uint256 __fee) public {
+    function updateFee (uint256 __fee) public onlyAdmin {
         fee = __fee;
+    }
+
+    function updateAdmin (address __admin) public onlyAdmin {
+        _admin = __admin;
     }
 
     function routeFunds(
