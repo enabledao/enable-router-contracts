@@ -10,13 +10,13 @@ Repayment router contracts to distribute funds to members of provided token regi
 
 | Contract | Deployment cost | Address                                                                                                                       | Logic                                                                                                                         |
 | -------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Router   | 591,571         | [0x1a3058D8E07b1127b855854550658aE803A4Bdec](https://ropsten.etherscan.io/address/0x1a3058D8E07b1127b855854550658aE803A4Bdec) | [0x2Bcb56a96191f73eAebbA09398Bc3a5c73d24a3e](https://ropsten.etherscan.io/address/0x2Bcb56a96191f73eAebbA09398Bc3a5c73d24a3e) |
+| Router   | 1,193,372       | [0x1a3058D8E07b1127b855854550658aE803A4Bdec](https://ropsten.etherscan.io/address/0x1a3058D8E07b1127b855854550658aE803A4Bdec) | [0x2Bcb56a96191f73eAebbA09398Bc3a5c73d24a3e](https://ropsten.etherscan.io/address/0x2Bcb56a96191f73eAebbA09398Bc3a5c73d24a3e) |
 
 ### Kovan
 
 | Contract | Deployment cost | Address                                                                                                                     | Logic                                                                                                                       |
 | -------- | --------------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Router   | 591,571         | [0xE09F9BC68DeA6435C86287515C36A8477570684B](https://kovan.etherscan.io/address/0xE09F9BC68DeA6435C86287515C36A8477570684B) | [0xA832825439ef14eF26B8939532c93794e385D209](https://kovan.etherscan.io/address/0xA832825439ef14eF26B8939532c93794e385D209) |
+| Router   | 1,193,372       | [0xE09F9BC68DeA6435C86287515C36A8477570684B](https://kovan.etherscan.io/address/0xE09F9BC68DeA6435C86287515C36A8477570684B) | [0xA832825439ef14eF26B8939532c93794e385D209](https://kovan.etherscan.io/address/0xA832825439ef14eF26B8939532c93794e385D209) |
 
 # Developer Instructions
 
