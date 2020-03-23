@@ -2,26 +2,31 @@ pragma solidity 0.5.11;
 
 import '@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol';
 
+
 contract Router is Pausable {
 
     uint256 public fee;
-    address private _admin;
 
-    modifier onlyAdmin (admin) {
-      require(admin == _admin, 'Admin only acton')
+    function checkForFee (
+        address paymentToken,
+        uint8 payments,
+        uint256[] memory values
+      ) internal returns (bool) {
+      uint256 total=fee;
+      if (paymentToken == address(0)) {
+        for(uint t=0; t< payments; t++) {
+          total = total + values[t];
+        }
+      }
+      return msg.value >= total;
     }
 
     function initialize(address pauser) public initializer {
-        _admin = pauser;
         Pausable.initialize(pauser);
     }
 
-    function updateFee (uint256 __fee) public onlyAdmin {
+    function updateFee (uint256 __fee) public onlyPauser {
         fee = __fee;
-    }
-
-    function updateAdmin (address __admin) public onlyAdmin {
-        _admin = __admin;
     }
 
     function routeFunds(
@@ -31,7 +36,11 @@ contract Router is Pausable {
         address[] memory recipients,
         uint256[] memory values
     ) public payable whenNotPaused {
-        address(uint160(_admin)).transfer(fee);
+      require(checkForFee(
+             paymentToken,
+             payments,
+             values
+      ), 'Insufficient funds, is fee included?');
 
         for (uint8 i = 0; i < payments; i++) {
           bool success;
