@@ -1,11 +1,11 @@
 {
   "contracts": {
     "Router": {
-      "address": "0x54fd17C7B4C61cef527a0364DFE23Bf707222df4",
-      "constructorCode": "60806040526112c6806100136000396000f3fe",
-      "bodyBytecodeHash": "1c6cd0d57f8490c396b8445a1bf7a58829c62d48d6261e59dab9bd22063d5dd9",
-      "localBytecodeHash": "61e0cdb962b5e98311465a60190e97e6eb31a1becb05d3e7bf2242b9a7c901a1",
-      "deployedBytecodeHash": "61e0cdb962b5e98311465a60190e97e6eb31a1becb05d3e7bf2242b9a7c901a1",
+      "address": "0xA832825439ef14eF26B8939532c93794e385D209",
+      "constructorCode": "60806040526114be806100136000396000f3fe",
+      "bodyBytecodeHash": "7bf6ea06f9769bb11ad0d9a4011dd7f8a927de61d4f18420e16d9e0eee0ba71a",
+      "localBytecodeHash": "bef8dadc467cc03626796a1c5b039b4620845409ae70a14260d5a7223c5bd699",
+      "deployedBytecodeHash": "bef8dadc467cc03626796a1c5b039b4620845409ae70a14260d5a7223c5bd699",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -31,7 +31,7 @@
           "members": [
             {
               "label": "bearer",
-              "astId": 217,
+              "astId": 289,
               "type": "t_mapping<t_bool>",
               "src": "150:32:4"
             }
@@ -49,7 +49,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 1762,
+          "astId": 1834,
           "type": "t_bool",
           "src": "757:24:15"
         },
@@ -57,7 +57,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 1764,
+          "astId": 1836,
           "type": "t_bool",
           "src": "876:25:15"
         },
@@ -65,7 +65,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 1820,
+          "astId": 1892,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:15"
         },
@@ -73,7 +73,7 @@
           "contract": "PauserRole",
           "path": "@openzeppelin/contracts-ethereum-package/contracts/access/roles/PauserRole.sol",
           "label": "_pausers",
-          "astId": 437,
+          "astId": 509,
           "type": "t_struct<Roles.Role>",
           "src": "327:27:6"
         },
@@ -81,7 +81,7 @@
           "contract": "PauserRole",
           "path": "@openzeppelin/contracts-ethereum-package/contracts/access/roles/PauserRole.sol",
           "label": "______gap",
-          "astId": 537,
+          "astId": 609,
           "type": "t_array:50<t_uint256>",
           "src": "1193:29:6"
         },
@@ -89,7 +89,7 @@
           "contract": "Pausable",
           "path": "@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol",
           "label": "_paused",
-          "astId": 559,
+          "astId": 631,
           "type": "t_bool",
           "src": "909:20:7"
         },
@@ -97,9 +97,17 @@
           "contract": "Pausable",
           "path": "@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol",
           "label": "______gap",
-          "astId": 642,
+          "astId": 714,
           "type": "t_array:50<t_uint256>",
           "src": "2163:29:7"
+        },
+        {
+          "contract": "Router",
+          "path": "contracts/Router.sol",
+          "label": "fee",
+          "astId": 6,
+          "type": "t_uint256",
+          "src": "146:18:0"
         }
       ],
       "warnings": {
@@ -113,7 +121,7 @@
             "contract": "PauserRole",
             "path": "@openzeppelin/contracts-ethereum-package/contracts/access/roles/PauserRole.sol",
             "label": "_pausers",
-            "astId": 437,
+            "astId": 509,
             "type": "t_struct<Roles.Role>",
             "src": "327:27:6"
           }
@@ -122,49 +130,13 @@
           {
             "action": "append",
             "updated": {
-              "index": 3,
-              "contract": "PauserRole",
-              "path": "@openzeppelin/contracts-ethereum-package/contracts/access/roles/PauserRole.sol",
-              "label": "_pausers",
-              "astId": 437,
-              "type": "t_struct<Roles.Role>",
-              "src": "327:27:6"
-            }
-          },
-          {
-            "action": "append",
-            "updated": {
-              "index": 4,
-              "contract": "PauserRole",
-              "path": "@openzeppelin/contracts-ethereum-package/contracts/access/roles/PauserRole.sol",
-              "label": "______gap",
-              "astId": 537,
-              "type": "t_array:50<t_uint256>",
-              "src": "1193:29:6"
-            }
-          },
-          {
-            "action": "append",
-            "updated": {
-              "index": 5,
-              "contract": "Pausable",
-              "path": "@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol",
-              "label": "_paused",
-              "astId": 559,
-              "type": "t_bool",
-              "src": "909:20:7"
-            }
-          },
-          {
-            "action": "append",
-            "updated": {
-              "index": 6,
-              "contract": "Pausable",
-              "path": "@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol",
-              "label": "______gap",
-              "astId": 642,
-              "type": "t_array:50<t_uint256>",
-              "src": "2163:29:7"
+              "index": 7,
+              "contract": "Router",
+              "path": "contracts/Router.sol",
+              "label": "fee",
+              "astId": 6,
+              "type": "t_uint256",
+              "src": "146:18:0"
             }
           }
         ]
