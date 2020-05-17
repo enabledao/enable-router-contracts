@@ -149,14 +149,14 @@
       {
         "address": "0xDeb2d32384Bd1cD5F2339C17e4C406F13DD1F655",
         "version": "0.0.1",
-        "implementation": "0x1A89AFCa69789Ed14cDc9116592c7d088853416d",
+        "implementation": "0xA832825439ef14eF26B8939532c93794e385D209",
         "admin": "0xa4Ed610e358712fCc76B074B4255C1d833eEDBBD",
         "kind": "Upgradeable"
       },
       {
         "address": "0xE09F9BC68DeA6435C86287515C36A8477570684B",
         "version": "0.0.1",
-        "implementation": "0x54fd17C7B4C61cef527a0364DFE23Bf707222df4",
+        "implementation": "0xA832825439ef14eF26B8939532c93794e385D209",
         "admin": "0xa4Ed610e358712fCc76B074B4255C1d833eEDBBD",
         "kind": "Upgradeable"
       }
